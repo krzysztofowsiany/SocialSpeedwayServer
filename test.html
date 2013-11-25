@@ -1,0 +1,21 @@
+<html>
+	<head>
+	<script src="http://phonegap.local/socket.io/socket.io.js"></script>
+	
+
+
+	</head>
+<body>
+<script>
+	
+alert(location.href);
+  var socket = io.connect('http://localhost:8080');
+  socket.emit('test', { my: 'data' });
+  socket.on('news', function (data) {
+    console.log(data);
+    alert('adsf');
+    
+  });
+</script>
+</body>
+</html>
