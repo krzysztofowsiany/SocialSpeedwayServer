@@ -1,0 +1,11 @@
+{
+	"name" : "SocialSpeedway",
+    "description" : "Speedway based mobile, multiplayer game",
+    "version" : "0.1.0",
+    "private" : true,
+    "dependencies": {
+        "pg": "2.8.3",
+        "socket.io":"0.9.16"
+    }
+}
+
