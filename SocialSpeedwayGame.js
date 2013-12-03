@@ -25,7 +25,10 @@ exports.initializeGame = function (sio, socket) {
 	//Player events
 	gameSocket.on('register', register);
 	gameSocket.on('login', login);
-	gameSocket.on('save_profile', save_profile);
+	gameSocket.on('saveProfile', saveProfile);
+	
+	gameSocket.on('saveContact', saveContact);
+	gameSocket.on('getData', getData);
 	
 };
 
@@ -63,14 +66,31 @@ function login(data) {
 
 /**
  * Profile save
- * save_profile
+ * saveProfile
  * @param data
  **/
-function save_profile(data) {
-	player.save_profile(data, gameSocket);	
+function saveProfile(data) {
+	player.saveProfile(data, gameSocket);	
 	
 }
 
+/**
+ * Profile contact
+ * saveContact
+ * @param data
+ **/
+function saveContact(data) {
+	player.saveContact(data, gameSocket);	
+}
 
 
+/**
+ * GetProfile data
+ * getData
+ * @param data
+ **/
+function getData(data) {
+	player.getData(data, gameSocket);	
+	
+}
 
