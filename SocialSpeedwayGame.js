@@ -1,7 +1,8 @@
 var io,
 	gameSocket,
-	player = require('./Player');
-	;
+	playerAuth = require('./PlayerAuth');
+	playerProfile = require('./PlayerProfile');
+	
 
 /***
  * Initialize game server
@@ -17,18 +18,20 @@ exports.initializeGame = function (sio, socket) {
 	gameSocket.emit('connected', {result:"ok"});
 	
 	
-	//Events
+	//EVENTS
 	
 	
-	
-	
-	//Player events
+	//Player Auth events
 	gameSocket.on('register', register);
 	gameSocket.on('login', login);
-	gameSocket.on('saveProfile', saveProfile);
 	
+	//Player Profile events
+	gameSocket.on('saveProfile', saveProfile);	
 	gameSocket.on('saveContact', saveContact);
 	gameSocket.on('getData', getData);
+	
+	//Player Game Profile like skills, badges, achievements etc.
+	
 	
 };
 
@@ -36,7 +39,7 @@ exports.initializeGame = function (sio, socket) {
 
 /************************************
  *									* 
- * 		  PLAYER FUNCTIONS			*
+ * 		  PLAYER AUTH FUNCTION      *
  * 									*
  ***********************************/
 
@@ -47,10 +50,8 @@ exports.initializeGame = function (sio, socket) {
  * */
 
 function register(data) {	
-	player.register(data, gameSocket);	
-	
+	playerAuth.register(data, gameSocket);	
 }
-
 
 
 /**
@@ -59,10 +60,15 @@ function register(data) {
  * @param data
  **/
 function login(data) {
-	player.login(data, gameSocket);	
+	playerAuth.login(data, gameSocket);	
 	
 }
 
+/*************************************
+ *								  	 * 
+ *  	PLAYER PROFILE FUNCTION      *
+ * 									 *
+ ************************************/
 
 /**
  * Profile save
@@ -70,8 +76,7 @@ function login(data) {
  * @param data
  **/
 function saveProfile(data) {
-	player.saveProfile(data, gameSocket);	
-	
+	playerProfile.saveProfile(data, gameSocket);	
 }
 
 /**
@@ -80,7 +85,7 @@ function saveProfile(data) {
  * @param data
  **/
 function saveContact(data) {
-	player.saveContact(data, gameSocket);	
+	playerProfile.saveContact(data, gameSocket);	
 }
 
 
@@ -90,7 +95,19 @@ function saveContact(data) {
  * @param data
  **/
 function getData(data) {
-	player.getData(data, gameSocket);	
-	
+	playerProfile.getData(data, gameSocket);	
 }
 
+/********************************************
+ *								  	 		* 
+ *  	PLAYER GAME PROFILE FUNCTIONS       *
+ * 									 		*
+ ********************************************/
+
+/**
+ * 
+ * @param 
+ * **/
+function getSkills() {
+	
+}
