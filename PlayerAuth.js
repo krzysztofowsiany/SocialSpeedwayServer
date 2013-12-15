@@ -8,22 +8,23 @@ var db  = require('./Database');
 exports.register = function (data, gameSocket) {
 	try {
 		console.log(data);
-		db.queryResults('SELECT * FROM players WHERE name=$1 LIMIT 1;', [data.name],
+		db.queryResults('SELECT * FROM players WHERE email=$1 LIMIT 1;', [data.email],
 			function (results)	{				
 				if (results.length>0){
 					gameSocket.emit('register_result', {register_result:'0'});
 				}
 				else {
-					db.queryResults("INSERT INTO players(name, password) VALUES($1,$2) RETURNING playerid;", [data.name, data.password],							
+					db.queryResults("INSERT INTO players(email, password) VALUES($1,$2) RETURNING playerid;", [data.email, data.password],							
 						function (results)	{				
 							if (results.length>0){
-								db.queryNoResults("INSERT INTO playerprofiles(playerid, sex, avatar, name, surname, age) VALUES($1,$2,$3,$4,$5,$6);",[
+								db.queryNoResults("INSERT INTO playerprofiles(playerid, sex, avatar, name, surname, age, mobile) VALUES($1,$2,$3,$4,$5,$6,$7);",[
 							         results[0].playerid,
 							         parseInt(data.profile.sex,10), 
 									 "",//avatar
 									 data.profile.name,
 									 data.profile.surname,
-									 parseInt(data.profile.age, 10)
+									 parseInt(data.profile.age, 10),
+									 data.profile.mobile
 								]);
 								
 								
@@ -36,7 +37,7 @@ exports.register = function (data, gameSocket) {
 										"'01-01-0001 00:00:00'," +
 										"'01-01-0001 00:00:00'," +
 										"'01-01-0001 00:00:00');",
-										[results[0].playerid]
+									[results[0].playerid]
 								);
 								
 
@@ -50,13 +51,7 @@ exports.register = function (data, gameSocket) {
 										"endurance) VALUES($1," +
 										"0,0,0,0);",
 										[results[0].playerid]
-								);
-								
-								db.queryNoResults("INSERT INTO playercontacts(playerid, mobile, email) VALUES($1,$2,$3);",
-										[ results[0].playerid,
-										  data.contact.mobile,
-										  data.contact.email]
-								);
+								);								
 								               
 								gameSocket.emit('register_result', {register_result:results[0].playerid});
 							}
@@ -82,7 +77,7 @@ exports.register = function (data, gameSocket) {
  */
 exports.login = function (data, gameSocket) {
 	try {
-		db.queryResults('SELECT playerid FROM players WHERE name=$1 AND password=$2;', [data.name, data.password],
+		db.queryResults('SELECT playerid FROM players WHERE email=$1 AND password=$2;', [data.email, data.password],
 			function (results)	{
 				if (results.length==1) {
 					gameSocket.emit('login_result', {login_result:results[0].playerid});

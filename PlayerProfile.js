@@ -17,15 +17,16 @@ function updatePlayerModified(playerid) {
  * @param gameSocket
  */
 exports.saveProfile = function (data, gameSocket) {
-	try {
+	try {		
 		db.queryResults(
-				'UPDATE playerprofiles SET name=$2, surname=$3, age=$4, sex=$5 WHERE playerid=$1;'
+				'UPDATE playerprofiles SET name=$2, surname=$3, age=$4, sex=$5,mobile=$6 WHERE playerid=$1;'
 				,[
-				  data['playerID'],
-				  data['name'],
-				  data['surname'],
-				  data['age'],
-				  data['sex'],				  		
+				  data.playerID,
+				  data.profile.name,
+				  data.profile.surname,
+				  data.profile.age,
+				  data.profile.sex,				  		
+				  data.profile.mobile,
 				],
 				function (results)	{
 						
@@ -33,36 +34,7 @@ exports.saveProfile = function (data, gameSocket) {
 						
 				}
 			);
-		updatePlayerModified(data['playerID']);
-	}
-	catch(e)
-	{
-		console.error(e);
-	}
-};
-
-/**
- * save contact
- * @param data
- * @param gameSocket
- */
-exports.saveContact = function (data, gameSocket) {	
-	try {
-		
-		db.queryResults(
-			'UPDATE playercontacts SET email=$2, mobile=$3 WHERE playerid=$1;'
-			,[
-			  data['playerID'],		
-			  data['email'],
-			  data['mobile']			  
-			],
-			function (results)	{
-				gameSocket.emit('saveContactResult', {result:1});
-				
-			}
-		);
-		
-		updatePlayerModified(data['playerID']);
+		updatePlayerModified(data.playerID);
 	}
 	catch(e)
 	{
@@ -79,7 +51,7 @@ exports.saveContact = function (data, gameSocket) {
 exports.getData = function (data, gameSocket) {	
 	try {
 		db.queryResults(
-				'SELECT pp.name, pp.surname, pp.age, pp.sex, pc.email, pc.mobile FROM players p JOIN playercontacts pc ON pc.playerid=p.playerid JOIN playerprofiles pp ON pp.playerid=p.playerid WHERE p.playerid=$1;'
+				'SELECT pp.name, pp.surname, pp.age, pp.sex, pp.mobile FROM players p JOIN playerprofiles pp ON pp.playerid=p.playerid WHERE p.playerid=$1;'
 				,[data['playerID']],
 				function (results)	{				
 					gameSocket.emit('resultData', {profile:results[0]});
