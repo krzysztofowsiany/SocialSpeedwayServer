@@ -77,6 +77,7 @@ exports.register = function (data, gameSocket) {
  */
 exports.login = function (data, gameSocket) {
 	try {
+		console.log(data);
 		db.queryResults('SELECT playerid FROM players WHERE email=$1 AND password=$2;', [data.email, data.password],
 			function (results)	{
 				if (results.length==1) {
