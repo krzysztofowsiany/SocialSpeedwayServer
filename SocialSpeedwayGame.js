@@ -2,6 +2,7 @@ var io,
 	gameSocket,
 	playerAuth = require('./PlayerAuth');
 	playerProfile = require('./PlayerProfile');
+	playerGameProfile = require('./PlayerGameProfile');
 	
 
 /***
@@ -31,7 +32,8 @@ exports.initializeGame = function (sio, socket) {
 	gameSocket.on('getData', getData);
 	
 	//Player Game Profile like skills, badges, achievements etc.
-	
+	gameSocket.on('getSkills', getSkills);	
+	gameSocket.on('saveSkills', saveSkills);
 	
 };
 
@@ -105,9 +107,17 @@ function getData(data) {
  ********************************************/
 
 /**
- * 
+ * getSkills
  * @param 
  * **/
 function getSkills() {
-	
+	playerGameProfile.getSkills(data, gameSocket);	
+}
+
+/**
+ * saveSkills
+ * @param 
+ * **/
+function saveSkills() {
+	playerGameProfile.saveSkills(data, gameSocket);	
 }

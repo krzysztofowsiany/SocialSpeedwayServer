@@ -6,7 +6,7 @@ var db  = require('./Database');
  * @param data
  * @param gameSocket
  */
-exports.updateSkills = function (data, gameSocket) {	
+exports.saveSkills = function (data, gameSocket) {	
 	try {		
 		db.queryResults(
 			'UPDATE playerskills SET strength=$2, agility=$3, speed=$4, endurance=$5 WHERE playerid=$1;'
@@ -18,7 +18,7 @@ exports.updateSkills = function (data, gameSocket) {
 			  data['endurance']
 			],
 			function (results)	{
-				gameSocket.emit('updateSkillsResult', {result:1});				
+				gameSocket.emit('saveSkillsResult', {result:1});				
 			}
 		);
 	}
@@ -31,7 +31,7 @@ exports.updateSkills = function (data, gameSocket) {
 
 
 /**
- * getData
+ * getSkills
  * @param data
  * @param gameSocket
  */
