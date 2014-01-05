@@ -12,10 +12,10 @@ exports.saveSkills = function (data, gameSocket) {
 			'UPDATE playerskills SET strength=$2, agility=$3, speed=$4, endurance=$5 WHERE playerid=$1;'
 			,[
 			  	data.playerID,
-				data.skils.strength,
-				data.skils.agility,
-			  	data.skils.speed,
-			  	data.skils.endurance
+				data.skills.strength,
+				data.skills.agility,
+			  	data.skills.speed,
+			  	data.skills.endurance
 			],
 			function (results)	{
 				gameSocket.emit('saveSkillsResult', {result:1});				
