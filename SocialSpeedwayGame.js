@@ -108,16 +108,16 @@ function getData(data) {
 
 /**
  * getSkills
- * @param 
+ * @param data
  * **/
-function getSkills() {
+function getSkills(data) {
 	playerGameProfile.getSkills(data, gameSocket);	
 }
 
 /**
  * saveSkills
- * @param 
+ * @param data
  * **/
-function saveSkills() {
+function saveSkills(data) {
 	playerGameProfile.saveSkills(data, gameSocket);	
 }
