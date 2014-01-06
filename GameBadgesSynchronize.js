@@ -3,7 +3,7 @@ var db  = require('./Database');
 
 function updateSyncData(playerid, data) {
 	try {
-		db.queryNoResults('UPDATE synchronize SET skills=$2 WHERE playerid=$1;', [playerid, data]);
+		db.queryNoResults('UPDATE synchronize SET badges=$2 WHERE playerid=$1;', [playerid, data]);
 	}
 	catch(e)
 	{
@@ -30,7 +30,7 @@ exports.setData = function (data, gameSocket) {
 			],
 			function (results)	{
 				updateSyncData(data.playerID, data.date)
-				gameSocket.emit('saveSkillsResult', {result:1});				
+				gameSocket.emit('saveBadgesResult', {result:1});				
 			}
 		);
 	}
@@ -50,10 +50,10 @@ exports.setData = function (data, gameSocket) {
 exports.getData = function (data, gameSocket) {	
 	try {
 		db.queryResults(				 
-				'SELECT p.strength, p.agility, p.speed, p.endurance, s.skillse FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
+				'SELECT p.strength, p.agility, p.speed, p.endurance, s.badges FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
 				,[data['playerID']],
 				function (results)	{				
-					gameSocket.emit('syncSkillsResultData', results[0]);					
+					gameSocket.emit('syncBadgesResultData', results[0]);					
 				}
 		);
 	}

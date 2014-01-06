@@ -1,12 +1,12 @@
 var io,
 	gameSocket,
 	playerAuth = require('./PlayerAuth');
-	synchronize = require('./Synchronize');
-	synchProfile = require('./GameProfileSynchronize');
-	synchSkills = require('./GameSkillsSynchronize');
-	//synchTraining = require('./GameTrainingSynchronize');
-	//synchBadges = require('./GameBadgesSynchronize');
-	//synchAchievements = require('./GameAchievementsSynchronize');
+	syncronize = require('./Synchronize');
+	syncProfile = require('./GameProfileSynchronize');
+	syncSkills = require('./GameSkillsSynchronize');
+	syncTraining = require('./GameTrainingSynchronize');
+	syncBadges = require('./GameBadgessyncronize');
+	syncAchievements = require('./GameAchievementsSynchronize');
 	
 	
 
@@ -29,8 +29,8 @@ exports.initializeGame = function (sio, socket) {
 	gameSocket.on('register', register);
 	gameSocket.on('login', login);
 	
-	//Synchronize
-	gameSocket.on('checkSynch', checkSynch);
+	//syncronize
+	gameSocket.on('checksync', checksync);
 		
 	//Profile
 	gameSocket.on('profileSetData', profileSetData);	
@@ -81,21 +81,21 @@ function login(data) {
 
 /*************************************
  *								  	 * 
- *  	    SYNCHRONIZATION          *
+ *  	    syncRONIZATION          *
  * 									 *
  ************************************/
 
 /**
- * checkSynch
- * checkSynch
+ * checksync
+ * checksync
  * @param data
  **/
-function checkSynch(data) {	
-	synchronize.check(data, gameSocket);	
+function checksync(data) {	
+	syncronize.check(data, gameSocket);	
 }
 
 /*************************************
- *  	PROFILE SYNCHRONIZATION      *
+ *  	PROFILE syncRONIZATION      *
  ************************************/
 
 /**
@@ -104,7 +104,7 @@ function checkSynch(data) {
  * @param data
  **/
 function profileSetData(data) {
-	synchProfile.setData(data, gameSocket);	
+	syncProfile.setData(data, gameSocket);	
 }
 
 /**
@@ -113,11 +113,11 @@ function profileSetData(data) {
  * @param data
  **/
 function profileGetData(data) {
-	synchProfile.getData(data, gameSocket);	
+	syncProfile.getData(data, gameSocket);	
 }
 
 /*************************************
- *  	SKILLS SYNCHRONIZATION       *
+ *  	SKILLS syncRONIZATION       *
  ************************************/
 /**
  * Skills setData
@@ -125,7 +125,7 @@ function profileGetData(data) {
  * @param data
  **/
 function skillsSetData(data) {
-	synchSkills.setData(data, gameSocket);	
+	syncSkills.setData(data, gameSocket);	
 }
 
 /**
@@ -134,12 +134,12 @@ function skillsSetData(data) {
  * @param data
  **/
 function skillsGetData(data) {
-	synchSkills.getData(data, gameSocket);	
+	syncSkills.getData(data, gameSocket);	
 }
 
 
 /*************************************
- *     TRAINING SYNCHRONIZATION      *
+ *     TRAINING syncRONIZATION      *
  ************************************/
 /**
  * Training setData
@@ -147,7 +147,7 @@ function skillsGetData(data) {
  * @param data
  **/
 function trainingSetData(data) {
-	synchTraining.setData(data, gameSocket);	
+	syncTraining.setData(data, gameSocket);	
 }
 
 /**
@@ -156,12 +156,12 @@ function trainingSetData(data) {
  * @param data
  **/
 function trainingGetData(data) {
-	synchTraining.getData(data, gameSocket);	
+	syncTraining.getData(data, gameSocket);	
 }
 
 
 /*************************************
- *  	BADGES SYNCHRONIZATION       *
+ *  	BADGES syncRONIZATION       *
  ************************************/
 /**
  * Badges setData
@@ -169,7 +169,7 @@ function trainingGetData(data) {
  * @param data
  **/
 function badgesSetData(data) {
-	synchBadges.setData(data, gameSocket);	
+	syncBadges.setData(data, gameSocket);	
 }
 
 /**
@@ -178,11 +178,11 @@ function badgesSetData(data) {
  * @param data
  **/
 function badgesGetData(data) {
-	synchBadges.getData(data, gameSocket);	
+	syncBadges.getData(data, gameSocket);	
 }
 
 /*************************************
- *    ACHIEVEMENTS SYNCHRONIZATION   *
+ *    ACHIEVEMENTS syncRONIZATION   *
  ************************************/
 /**
  * Achievements setData
@@ -190,7 +190,7 @@ function badgesGetData(data) {
  * @param data
  **/
 function achievementsSetData(data) {
-	synchAchievements.setData(data, gameSocket);	
+	syncAchievements.setData(data, gameSocket);	
 }
 
 /**
@@ -199,5 +199,5 @@ function achievementsSetData(data) {
  * @param data
  **/
 function achievementsGetData(data) {
-	synchAchievements.getData(data, gameSocket);	
+	syncAchievements.getData(data, gameSocket);	
 }

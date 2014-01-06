@@ -11,7 +11,7 @@ function updatePlayerModified(playerid) {
 	}
 }
 
-function updateSynchData(playerid, data) {
+function updateSyncData(playerid, data) {
 	try {
 		db.queryNoResults('UPDATE synchronize SET profile=$2 WHERE playerid=$1;', [playerid, data]);
 	}
@@ -41,7 +41,7 @@ exports.setData = function (data, gameSocket) {
 				],
 				function (results)	{
 						
-					updateSynchData(data.playerID, data.date)
+					updateSyncData(data.playerID, data.date)
 					gameSocket.emit('saveProfileResult', {result:1});						
 				}
 			);
@@ -62,7 +62,7 @@ exports.setData = function (data, gameSocket) {
 exports.getData = function (data, gameSocket) {	
 	try {
 		db.queryResults(
-				'SELECT pp.name, pp.surname, pp.age, pp.sex, pp.mobile, s.profile FROM players p JOIN playerprofiles pp ON pp.playerid=p.playerid JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
+				'SELECT p.name, p.surname, p.age, p.sex, p.mobile, s.profile FROM playerprofiles p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
 				,[data['playerID']],
 				function (results)	{				
 					gameSocket.emit('syncProfileResultData', results[0]);
