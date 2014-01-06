@@ -51,7 +51,23 @@ exports.register = function (data, gameSocket) {
 										"endurance) VALUES($1," +
 										"0,0,0,0);",
 										[results[0].playerid]
-								);								
+								);	
+								
+
+								/*
+								 * add synchronization 
+								 * timestamp to synchronize parts of data
+								 */
+								db.queryNoResults("INSERT INTO synchronize(playerid, profile," +
+										"skills, training, badges, achievements) VALUES($1," +
+										"'01-01-0001 00:00:00'," +
+										"'01-01-0001 00:00:00'," +
+										"'01-01-0001 00:00:00'," +
+										"'01-01-0001 00:00:00'," +
+										"'01-01-0001 00:00:00');",
+									[results[0].playerid]
+								);
+								
 								               
 								gameSocket.emit('register_result', {register_result:results[0].playerid});
 							}

@@ -1,8 +1,13 @@
 var io,
 	gameSocket,
 	playerAuth = require('./PlayerAuth');
-	playerProfile = require('./PlayerProfile');
-	playerGameProfile = require('./PlayerGameProfile');
+	synchronize = require('./Synchronize');
+	synchProfile = require('./GameProfileSynchronize');
+	synchSkills = require('./GameSkillsSynchronize');
+	//synchTraining = require('./GameTrainingSynchronize');
+	//synchBadges = require('./GameBadgesSynchronize');
+	//synchAchievements = require('./GameAchievementsSynchronize');
+	
 	
 
 /***
@@ -17,31 +22,41 @@ exports.initializeGame = function (sio, socket) {
 	gameSocket = socket;
 	
 	gameSocket.emit('connected', {result:"ok"});
-	
-	
+		
 	//EVENTS
 	
-	
-	//Player Auth events
+	//Auth events
 	gameSocket.on('register', register);
 	gameSocket.on('login', login);
 	
-	//Player Profile events
-	gameSocket.on('saveProfile', saveProfile);	
-	gameSocket.on('saveContact', saveContact);
-	gameSocket.on('getData', getData);
+	//Synchronize
+	gameSocket.on('checkSynch', checkSynch);
+		
+	//Profile
+	gameSocket.on('profileSetData', profileSetData);	
+	gameSocket.on('profileGetData', profileGetData);
+		
+	//Skills
+	gameSocket.on('skillsSetSkills', skillsSetData);	
+	gameSocket.on('skillsGetSkills', skillsGetData);
 	
-	//Player Game Profile like skills, badges, achievements etc.
-	gameSocket.on('getSkills', getSkills);	
-	gameSocket.on('saveSkills', saveSkills);
+	//Training
+	gameSocket.on('trainingSetSkills', trainingSetData);	
+	gameSocket.on('trainingGetSkills', trainingGetData);
 	
+	//Badges
+	gameSocket.on('badgesSetSkills', badgesSetData);	
+	gameSocket.on('badgesGetSkills', badgesGetData);
+	
+	//Achievements
+	gameSocket.on('achievementsSetSkills', achievementsSetData);	
+	gameSocket.on('achievementsGetSkills', achievementsGetData);
 };
-
 
 
 /************************************
  *									* 
- * 		  PLAYER AUTH FUNCTION      *
+ * 		PLAYER AUTH FUNCTION        *
  * 									*
  ***********************************/
 
@@ -55,69 +70,134 @@ function register(data) {
 	playerAuth.register(data, gameSocket);	
 }
 
-
 /**
  * Login user into game
  * login
  * @param data
  **/
 function login(data) {
-	playerAuth.login(data, gameSocket);	
-	
+	playerAuth.login(data, gameSocket);		
 }
 
 /*************************************
  *								  	 * 
- *  	PLAYER PROFILE FUNCTION      *
+ *  	    SYNCHRONIZATION          *
  * 									 *
  ************************************/
 
 /**
- * Profile save
- * saveProfile
+ * checkSynch
+ * checkSynch
  * @param data
  **/
-function saveProfile(data) {
-	playerProfile.saveProfile(data, gameSocket);	
+function checkSynch(data) {	
+	synchronize.check(data, gameSocket);	
 }
 
+/*************************************
+ *  	PROFILE SYNCHRONIZATION      *
+ ************************************/
+
 /**
- * Profile contact
- * saveContact
+ * Profile setData
+ * profileSetData
  * @param data
  **/
-function saveContact(data) {
-	playerProfile.saveContact(data, gameSocket);	
+function profileSetData(data) {
+	synchProfile.setData(data, gameSocket);	
 }
 
-
 /**
- * GetProfile data
- * getData
+ * Profile getData
+ * profileGetData
  * @param data
  **/
-function getData(data) {
-	playerProfile.getData(data, gameSocket);	
+function profileGetData(data) {
+	synchProfile.getData(data, gameSocket);	
 }
 
-/********************************************
- *								  	 		* 
- *  	PLAYER GAME PROFILE FUNCTIONS       *
- * 									 		*
- ********************************************/
-
+/*************************************
+ *  	SKILLS SYNCHRONIZATION       *
+ ************************************/
 /**
- * getSkills
+ * Skills setData
+ * skillsSetData
  * @param data
- * **/
-function getSkills(data) {
-	playerGameProfile.getSkills(data, gameSocket);	
+ **/
+function skillsSetData(data) {
+	synchSkills.setData(data, gameSocket);	
 }
 
 /**
- * saveSkills
+ * Skills getData
+ * skillsGetData
  * @param data
- * **/
-function saveSkills(data) {
-	playerGameProfile.saveSkills(data, gameSocket);	
+ **/
+function skillsGetData(data) {
+	synchSkills.getData(data, gameSocket);	
+}
+
+
+/*************************************
+ *     TRAINING SYNCHRONIZATION      *
+ ************************************/
+/**
+ * Training setData
+ * trainingSetData
+ * @param data
+ **/
+function trainingSetData(data) {
+	synchTraining.setData(data, gameSocket);	
+}
+
+/**
+ * Training getData
+ * trainingGetData
+ * @param data
+ **/
+function trainingGetData(data) {
+	synchTraining.getData(data, gameSocket);	
+}
+
+
+/*************************************
+ *  	BADGES SYNCHRONIZATION       *
+ ************************************/
+/**
+ * Badges setData
+ * badgesSetData
+ * @param data
+ **/
+function badgesSetData(data) {
+	synchBadges.setData(data, gameSocket);	
+}
+
+/**
+ * Badges getData
+ * badgesGetData
+ * @param data
+ **/
+function badgesGetData(data) {
+	synchBadges.getData(data, gameSocket);	
+}
+
+/*************************************
+ *    ACHIEVEMENTS SYNCHRONIZATION   *
+ ************************************/
+/**
+ * Achievements setData
+ * achievementsSetData
+ * @param data
+ **/
+function achievementsSetData(data) {
+	synchAchievements.setData(data, gameSocket);	
+}
+
+/**
+ * Achievements getData
+ * achievementsGetData
+ * @param data
+ **/
+function achievementsGetData(data) {
+	synchAchievements.getData(data, gameSocket);	
 }
