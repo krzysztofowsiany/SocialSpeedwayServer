@@ -5,7 +5,7 @@ var io,
 	syncProfile = require('./GameProfileSynchronize');
 	syncSkills = require('./GameSkillsSynchronize');
 	syncTraining = require('./GameTrainingSynchronize');
-	syncBadges = require('./GameBadgessyncronize');
+	syncBadges = require('./GameBadgesSynchronize');
 	syncAchievements = require('./GameAchievementsSynchronize');
 	
 	
@@ -30,7 +30,7 @@ exports.initializeGame = function (sio, socket) {
 	gameSocket.on('login', login);
 	
 	//syncronize
-	gameSocket.on('checksync', checksync);
+	gameSocket.on('checkSynch', checkSynch);
 		
 	//Profile
 	gameSocket.on('profileSetData', profileSetData);	
@@ -90,7 +90,7 @@ function login(data) {
  * checksync
  * @param data
  **/
-function checksync(data) {	
+function checkSynch(data) {	
 	syncronize.check(data, gameSocket);	
 }
 

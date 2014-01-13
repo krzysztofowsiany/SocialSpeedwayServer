@@ -9,16 +9,14 @@ var db  = require('./Database');
 function profileCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				'SELECT profile FROM synchronize WHERE playerid=$1;'
+				"SELECT profile FROM synchronize WHERE playerid=$1"
 				,[playerID],
-				function (results)	{	
-					//console.log(results[0].profile);
+				function (results)	{			
 					var res = 0;
 					if (date > results[0].profile)
 						res = -1;
 					else if (date < results[0].profile)
 						res = 1;
-					
 					gameSocket.emit('syncProfileCheckResult', res);					
 				}
 		);
@@ -39,10 +37,9 @@ function profileCheck(gameSocket, date, playerID) {
 function skillsCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				'SELECT skills FROM synchronize WHERE playerid=$1;'
+				"SELECT skills FROM synchronize WHERE playerid=$1;"
 				,[playerID],
 				function (results)	{	
-					//console.log(results[0].profile);
 					var res = 0;
 					if (date > results[0].skills)
 						res = -1;
@@ -69,10 +66,9 @@ function skillsCheck(gameSocket, date, playerID) {
 function trainingCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				'SELECT training FROM synchronize WHERE playerid=$1;'
+				"SELECT training FROM synchronize WHERE playerid=$1 ;"
 				,[playerID],
 				function (results)	{	
-					//console.log(results[0].profile);
 					var res = 0;
 					if (date > results[0].training)
 						res = -1;
@@ -99,10 +95,9 @@ function trainingCheck(gameSocket, date, playerID) {
 function badgesCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				'SELECT badges FROM synchronize WHERE playerid=$1;'
+				"SELECT badges FROM synchronize WHERE playerid=$1;"
 				,[playerID],
-				function (results)	{	
-					//console.log(results[0].profile);
+				function (results)	{					
 					var res = 0;
 					if (date > results[0].badges)
 						res = -1;
@@ -128,10 +123,9 @@ function badgesCheck(gameSocket, date, playerID) {
 function achievementsCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				'SELECT achievements FROM synchronize WHERE playerid=$1;'
-				,[playerID],
-				function (results)	{	
-					//console.log(results[0].profile);
+				"SELECT achievements FROM synchronize WHERE playerid=$1 AND achievements>$2;"
+				,[playerID, date],
+				function (results)	{					
 					var res = 0;
 					if (date > results[0].achievements)
 						res = -1;
@@ -158,6 +152,7 @@ exports.check = function (data, gameSocket) {
 	//data.what
 	//data.date	  		
 	//data.playerID	
+	//console.log(data);
 	switch (data.what) {
 		case 'profile':
 			profileCheck(gameSocket, data.date, data.playerID);
