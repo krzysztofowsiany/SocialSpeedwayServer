@@ -37,17 +37,17 @@ function profileCheck(gameSocket, date, playerID) {
 function skillsCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				"SELECT skills FROM synchronize WHERE playerid=$1;"
-				,[playerID],
-				function (results)	{	
-					var res = 0;
-					if (date > results[0].skills)
-						res = -1;
-					else if (date < results[0].skills)
-						res = 1;
-					
-					gameSocket.emit('syncSkillsCheckResult', res);					
-				}
+			"SELECT skills FROM synchronize WHERE playerid=$1;"
+			,[playerID],
+			function (results)	{	
+				var res = 0;
+				if (date > results[0].skills)
+					res = -1;
+				else if (date < results[0].skills)
+					res = 1;
+				
+				gameSocket.emit('syncSkillsCheckResult', res);					
+			}
 		);
 	}
 	catch(e)
@@ -123,17 +123,17 @@ function badgesCheck(gameSocket, date, playerID) {
 function achievementsCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				"SELECT achievements FROM synchronize WHERE playerid=$1 AND achievements>$2;"
-				,[playerID, date],
-				function (results)	{					
-					var res = 0;
-					if (date > results[0].achievements)
-						res = -1;
-					else if (date < results[0].achievements)
-						res = 1;
-					
-					gameSocket.emit('syncAchievementsheckResult', res);					
-				}
+			"SELECT achievements FROM synchronize WHERE playerid=$1;"
+			,[playerID],
+			function (results)	{					
+				var res = 0;
+				if (date > results[0].achievements)
+					res = -1;
+				else if (date < results[0].achievements)
+					res = 1;
+				
+				gameSocket.emit('syncAchievementsCheckResult', res);					
+			}
 		);
 	}
 	catch(e)
@@ -152,25 +152,25 @@ exports.check = function (data, gameSocket) {
 	//data.what
 	//data.date	  		
 	//data.playerID	
-	//console.log(data);
+	console.log(data);
 	switch (data.what) {
 		case 'profile':
-			profileCheck(gameSocket, data.date, data.playerID);
+			//profileCheck(gameSocket, data.date, data.playerID);
 			break;
 			
 		case 'skills':
-			skillsCheck(gameSocket, data.date, data.playerID);
+			//skillsCheck(gameSocket, data.date, data.playerID);
 			break;
 			
 		case 'training':
-			trainingCheck(gameSocket, data.date, data.playerID);
+			//trainingCheck(gameSocket, data.date, data.playerID);
 			break;
 			
 		case 'badges':
 			badgesCheck(gameSocket, data.date, data.playerID);
 			break;
 			
-		case 'achievements':
+		case 'achievements':			
 			achievementsCheck(gameSocket, data.date, data.playerID);
 			break;
 	}

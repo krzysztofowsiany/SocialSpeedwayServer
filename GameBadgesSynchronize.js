@@ -1,11 +1,81 @@
 var db  = require('./Database');
 
+var currentArray;
+var date;
+var socket;
 
 function updateSyncData(playerid, data) {
 	try {
-		db.queryNoResults('UPDATE synchronize SET badges=$2 WHERE playerid=$1;', [playerid, data]);
+		db.queryNoResults('UPDATE synchronize SET badges=$2 WHERE playerid=$1;', 
+				[playerid, new Date(data - (new Date().getTimezoneOffset() * 60*1000)).toUTCString()]);
 	}
 	catch(e)
+	{
+		console.error(e);
+	}
+}
+
+
+/**
+ * grantBadges
+ * @param achievementID
+ * @param playerID
+ */
+
+function grantBadge(gameSocket, arrayIndex, playerID) {
+	try {
+		db.queryResults(
+			'INSERT INTO badgestoplayer (playerid, badgeid, granted) VALUES($1,$2, $3);'
+			,[
+			  	playerID,
+			  	currentArray[arrayIndex].id,
+			  	new Date(date - (new Date().getTimezoneOffset() * 60*1000)).toUTCString()	
+			],
+			function (results)	{
+				console.log("ADD");	
+				findBadge(gameSocket, arrayIndex+1, playerID);
+			}
+		);		
+	}
+	catch(e)		
+	{
+		console.error(e);
+	}
+}
+
+/**
+ * findBadge
+ * @param badgeID
+ * @param playerID
+ */
+function findBadge(gameSocket, arrayIndex, playerID) {
+	try {		
+		if (arrayIndex < currentArray.length) {
+			db.queryResults(
+				'SELECT * FROM badgestoplayer WHERE playerid=$1 AND badgeid=$2;'
+				,[
+				  	playerID,
+				  	currentArray[arrayIndex].id
+				],
+				function (results)	{
+					//if not found add achievement
+					if (results.length==0) {					
+						grantBadge(gameSocket, arrayIndex, playerID);						
+					}
+					else 				
+					//next if array size is less					
+						findBadge(gameSocket, arrayIndex+1, playerID);
+					
+				}
+			);		
+			
+		}	
+		else {
+			gameSocket.emit('saveBadgesResult', {result:1});					
+			updateSyncData(playerID, date);
+		}
+	}
+	catch(e)		
 	{
 		console.error(e);
 	}
@@ -18,21 +88,15 @@ function updateSyncData(playerid, data) {
  * @param gameSocket
  */
 exports.setData = function (data, gameSocket) {	
-	try {		
-		db.queryResults(
-			'UPDATE playerskills SET strength=$2, agility=$3, speed=$4, endurance=$5 WHERE playerid=$1;'
-			,[
-			  	data.playerID,
-				data.skills.strength,
-				data.skills.agility,
-			  	data.skills.speed,
-			  	data.skills.endurance
-			],
-			function (results)	{
-				updateSyncData(data.playerID, data.date)
-				gameSocket.emit('saveBadgesResult', {result:1});				
-			}
-		);
+	try {	
+		if (data!= undefined) {
+			currentArray = data.badges;
+			console.log("GameBadgesSynchronization:setData");
+			socket = gameSocket;
+			date = data.date;
+		
+			findBadge(gameSocket, 0, data.playerID);		
+		}
 	}
 	catch(e)
 	{
@@ -42,6 +106,38 @@ exports.setData = function (data, gameSocket) {
 
 
 
+
+/***********
+ * GET DATA METHOD
+ */
+
+/**
+ * resultBadgeData
+ * @param gameSocket
+ * @param badgess
+ * @param playerID
+ */
+
+function resultBadgeData(gameSocket, badges, playerID) {
+	try {
+		db.queryResults(
+			'SELECT badges FROM synchronize WHERE playerid=$1;',
+			[playerID],
+			function (results) {
+				gameSocket.emit('syncBadgesResultData', {
+					'date':results[0],
+					'badges':badges
+				});	
+			}
+		);
+		
+	}
+	catch (e) {
+		console.error(e);
+	}
+}
+
+
 /**
  * getData
  * @param data
@@ -49,13 +145,18 @@ exports.setData = function (data, gameSocket) {
  */
 exports.getData = function (data, gameSocket) {	
 	try {
-		db.queryResults(				 
-				'SELECT p.strength, p.agility, p.speed, p.endurance, s.badges FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
-				,[data['playerID']],
-				function (results)	{				
-					gameSocket.emit('syncBadgesResultData', results[0]);					
-				}
+		console.log("GameBadgesSynchronization:getData");
+		db.queryResults(
+			'SELECT badgeid AS id FROM badgestoplayer WHERE playerid=$1;', [data.playerID],
+			function (results)	{
+				//result data
+				console.log(results);
+				//get sync data
+				resultBadgeData(gameSocket, results, data.playerID);
+							
+			}
 		);
+		
 	}
 	catch(e)	
 	

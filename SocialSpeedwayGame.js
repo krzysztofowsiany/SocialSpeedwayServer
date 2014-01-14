@@ -1,7 +1,7 @@
 var io,
 	gameSocket,
 	playerAuth = require('./PlayerAuth');
-	syncronize = require('./Synchronize');
+	synchronize = require('./Synchronize');
 	syncProfile = require('./GameProfileSynchronize');
 	syncSkills = require('./GameSkillsSynchronize');
 	syncTraining = require('./GameTrainingSynchronize');
@@ -37,20 +37,20 @@ exports.initializeGame = function (sio, socket) {
 	gameSocket.on('profileGetData', profileGetData);
 		
 	//Skills
-	gameSocket.on('skillsSetSkills', skillsSetData);	
-	gameSocket.on('skillsGetSkills', skillsGetData);
+	gameSocket.on('skillsSetData', skillsSetData);	
+	gameSocket.on('skillsGetData', skillsGetData);
 	
 	//Training
-	gameSocket.on('trainingSetSkills', trainingSetData);	
-	gameSocket.on('trainingGetSkills', trainingGetData);
+	gameSocket.on('trainingSetData', trainingSetData);	
+	gameSocket.on('trainingGetData', trainingGetData);
 	
 	//Badges
-	gameSocket.on('badgesSetSkills', badgesSetData);	
-	gameSocket.on('badgesGetSkills', badgesGetData);
+	gameSocket.on('badgesSetData', badgesSetData);	
+	gameSocket.on('badgesGetData', badgesGetData);
 	
 	//Achievements
-	gameSocket.on('achievementsSetSkills', achievementsSetData);	
-	gameSocket.on('achievementsGetSkills', achievementsGetData);
+	gameSocket.on('achievementsSetData', achievementsSetData);	
+	gameSocket.on('achievementsGetData', achievementsGetData);
 };
 
 
@@ -91,7 +91,7 @@ function login(data) {
  * @param data
  **/
 function checkSynch(data) {	
-	syncronize.check(data, gameSocket);	
+	synchronize.check(data, gameSocket);	
 }
 
 /*************************************
@@ -190,6 +190,7 @@ function badgesGetData(data) {
  * @param data
  **/
 function achievementsSetData(data) {
+	console.log(data);
 	syncAchievements.setData(data, gameSocket);	
 }
 
@@ -199,5 +200,6 @@ function achievementsSetData(data) {
  * @param data
  **/
 function achievementsGetData(data) {
+	console.log(data);
 	syncAchievements.getData(data, gameSocket);	
 }

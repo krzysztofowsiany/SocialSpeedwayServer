@@ -33,6 +33,7 @@ function updateSyncData(playerid, data) {
  */
 exports.setData = function (data, gameSocket) {
 	try {		
+		console.log("GameProfileSynchronization:setData");
 		db.queryResults(
 				'UPDATE playerprofiles SET name=$2, surname=$3, age=$4, sex=$5,mobile=$6 WHERE playerid=$1;'
 				,[
@@ -64,6 +65,7 @@ exports.setData = function (data, gameSocket) {
  */
 exports.getData = function (data, gameSocket) {	
 	try {		
+		console.log("GameProfileSynchronization:getData");
 		db.queryResults(
 				'SELECT p.name, p.surname, p.age, p.sex, p.mobile, s.profile FROM playerprofiles p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
 				,[data['playerID']],
