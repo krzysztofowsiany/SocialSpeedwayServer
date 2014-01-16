@@ -20,13 +20,13 @@ function updateSyncData(playerid, data) {
 exports.setData = function (data, gameSocket) {	
 	try {		
 		db.queryResults(
-			'UPDATE playerskills SET strength=$2, agility=$3, speed=$4, endurance=$5 WHERE playerid=$1;'
+			'UPDATE playertraining SET type=$2, level=$3, endtime=$4, costend=$5 WHERE playerid=$1;'
 			,[
 			  	data.playerID,
-				data.skills.strength,
-				data.skills.agility,
-			  	data.skills.speed,
-			  	data.skills.endurance
+				data.training.type,
+				data.training.value,
+			  	data.training.end,
+			  	data.training.cost
 			],
 			function (results)	{
 				updateSyncData(data.playerID, data.date)

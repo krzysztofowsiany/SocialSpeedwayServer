@@ -6,7 +6,7 @@ var db  = require('./Database');
  * @param gameSocket
  */
 exports.register = function (data, gameSocket) {
-	try {
+	try {		
 		console.log(data);
 		db.queryResults('SELECT * FROM players WHERE email=$1 LIMIT 1;', [data.email],
 			function (results)	{				
@@ -15,7 +15,8 @@ exports.register = function (data, gameSocket) {
 				}
 				else {
 					db.queryResults("INSERT INTO players(email, password) VALUES($1,$2) RETURNING playerid;", [data.email, data.password],							
-						function (results)	{				
+						function (results)	{		
+						console.log(results);
 							if (results.length>0){
 								db.queryNoResults("INSERT INTO playerprofiles(playerid, sex, avatar, name, surname, age, mobile) VALUES($1,$2,$3,$4,$5,$6,$7);",[
 							         results[0].playerid,
@@ -68,6 +69,20 @@ exports.register = function (data, gameSocket) {
 									[results[0].playerid]
 								);
 								
+								
+								/*
+								 * add training
+								 * training type, level, endtime and cost
+								 */
+								db.queryNoResults("INSERT INTO playertraining(playerid, type," +
+										"level, endtime, cost) VALUES($1," +
+										"0," +
+										"0," +
+										"null," +										
+										"0);",
+									[results[0].playerid]
+								);
+														 
 								               
 								gameSocket.emit('register_result', {register_result:results[0].playerid});
 							}
