@@ -1,4 +1,8 @@
-var db  = require('./Database');
+var db;
+
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
 
 
 function updatePlayerModified(playerid) {
@@ -44,7 +48,8 @@ exports.setData = function (data, gameSocket) {
 				  data.profile.sex,				  		
 				  data.profile.mobile,
 				],
-				function (results)	{						
+				function (results)	{		
+					console.log("GameProfileSynchronization:"+results);
 					updateSyncData(data.playerID, data.date);
 					gameSocket.emit('saveProfileResult', {result:1});						
 				}

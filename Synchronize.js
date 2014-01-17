@@ -1,4 +1,8 @@
-var db  = require('./Database');
+var db;
+
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
 
 /**
  * profileCheck
@@ -9,16 +13,18 @@ var db  = require('./Database');
 function profileCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				"SELECT profile FROM synchronize WHERE playerid=$1"
-				,[playerID],
-				function (results)	{			
-					var res = 0;
-					if (date > results[0].profile)
-						res = -1;
-					else if (date < results[0].profile)
-						res = 1;
-					gameSocket.emit('syncProfileCheckResult', res);					
-				}
+			"SELECT profile FROM synchronize WHERE playerid=$1"
+			,[playerID],
+			function (results)	{			
+				var res = 0;
+				if (date > results[0].profile)
+					res = -1;
+				else if (date < results[0].profile)
+					res = 1;
+				
+				console.log("profile: "+res);
+				gameSocket.emit('syncProfileCheckResult', res);					
+			}
 		);
 	}
 	catch(e)
@@ -45,7 +51,7 @@ function skillsCheck(gameSocket, date, playerID) {
 					res = -1;
 				else if (date < results[0].skills)
 					res = 1;
-				
+				console.log("skills: "+res);
 				gameSocket.emit('syncSkillsCheckResult', res);					
 			}
 		);
@@ -66,17 +72,17 @@ function skillsCheck(gameSocket, date, playerID) {
 function trainingCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				"SELECT training FROM synchronize WHERE playerid=$1 ;"
-				,[playerID],
-				function (results)	{	
-					var res = 0;
-					if (date > results[0].training)
-						res = -1;
-					else if (date < results[0].training)
-						res = 1;
-					
-					gameSocket.emit('syncTrainingCheckResult', res);					
-				}
+			"SELECT training FROM synchronize WHERE playerid=$1 ;"
+			,[playerID],
+			function (results)	{	
+				var res = 0;
+				if (date > results[0].training)
+					res = -1;
+				else if (date < results[0].training)
+					res = 1;
+				console.log("training: "+res);
+				gameSocket.emit('syncTrainingCheckResult', res);					
+			}
 		);
 	}
 	catch(e)
@@ -95,17 +101,17 @@ function trainingCheck(gameSocket, date, playerID) {
 function badgesCheck(gameSocket, date, playerID) {
 	try {		
 		db.queryResults(
-				"SELECT badges FROM synchronize WHERE playerid=$1;"
-				,[playerID],
-				function (results)	{					
-					var res = 0;
-					if (date > results[0].badges)
-						res = -1;
-					else if (date < results[0].badges)
-						res = 1;
-					
-					gameSocket.emit('syncBadgesCheckResult', res);					
-				}
+			"SELECT badges FROM synchronize WHERE playerid=$1;"
+			,[playerID],
+			function (results)	{					
+				var res = 0;
+				if (date > results[0].badges)
+					res = -1;
+				else if (date < results[0].badges)
+					res = 1;
+				console.log("badgess: "+res);
+				gameSocket.emit('syncBadgesCheckResult', res);					
+			}
 		);
 	}
 	catch(e)
@@ -131,7 +137,7 @@ function achievementsCheck(gameSocket, date, playerID) {
 					res = -1;
 				else if (date < results[0].achievements)
 					res = 1;
-				
+				console.log("achievements: "+res);
 				gameSocket.emit('syncAchievementsCheckResult', res);					
 			}
 		);
@@ -152,18 +158,18 @@ exports.check = function (data, gameSocket) {
 	//data.what
 	//data.date	  		
 	//data.playerID	
-	console.log(data);
+	//console.log(data);
 	switch (data.what) {
 		case 'profile':
-			//profileCheck(gameSocket, data.date, data.playerID);
+			profileCheck(gameSocket, data.date, data.playerID);
 			break;
 			
 		case 'skills':
-			//skillsCheck(gameSocket, data.date, data.playerID);
+			skillsCheck(gameSocket, data.date, data.playerID);
 			break;
 			
 		case 'training':
-			//trainingCheck(gameSocket, data.date, data.playerID);
+			trainingCheck(gameSocket, data.date, data.playerID);
 			break;
 			
 		case 'badges':

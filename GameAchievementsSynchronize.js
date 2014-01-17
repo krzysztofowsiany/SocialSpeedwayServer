@@ -1,13 +1,18 @@
-var db  = require('./Database');
-
 var currentArray;
 var date;
 var socket;
 
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
+
+
+
 function updateSyncData(playerid, data) {
 	try {
+		console.log(data);
 		db.queryNoResults('UPDATE synchronize SET achievements=$2 WHERE playerid=$1;', 
-				[playerid, new Date(data - (new Date().getTimezoneOffset() * 60*1000)).toUTCString()]);
+			[playerid, new Date(data - (new Date().getTimezoneOffset() * 60*1000)).toUTCString()]);
 	}
 	catch(e)
 	{

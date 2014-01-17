@@ -1,14 +1,31 @@
 var io,
 	gameSocket,
-	playerAuth = require('./PlayerAuth');
-	synchronize = require('./Synchronize');
-	syncProfile = require('./GameProfileSynchronize');
-	syncSkills = require('./GameSkillsSynchronize');
-	syncTraining = require('./GameTrainingSynchronize');
-	syncBadges = require('./GameBadgesSynchronize');
+	db  = require('./Database'),
+
+	playerAuth = require('./PlayerAuth'),
+	synchronize = require('./Synchronize'),
+	syncProfile = require('./GameProfileSynchronize'),
+	syncSkills = require('./GameSkillsSynchronize'),
+	syncTraining = require('./GameTrainingSynchronize'),
+	syncBadges = require('./GameBadgesSynchronize'),
 	syncAchievements = require('./GameAchievementsSynchronize');
 	
-	
+
+/**
+ * Send database handler to synch class
+ * setDB
+ */
+function setDB() {
+	db.init();
+	playerAuth.setDB(db);
+	synchronize.setDB(db);
+	syncProfile.setDB(db);
+	syncSkills.setDB(db);
+	syncTraining.setDB(db);
+	syncBadges.setDB(db);
+	syncAchievements.setDB(db);	
+}
+
 
 /***
  * Initialize game server
@@ -20,6 +37,8 @@ var io,
 exports.initializeGame = function (sio, socket) {
 	io = sio;
 	gameSocket = socket;
+	
+	setDB();
 	
 	gameSocket.emit('connected', {result:"ok"});
 		

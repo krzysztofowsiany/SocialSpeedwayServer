@@ -1,8 +1,11 @@
-var db  = require('./Database');
-
 var currentArray;
 var date;
 var socket;
+var db;
+
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
 
 function updateSyncData(playerid, data) {
 	try {

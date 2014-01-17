@@ -1,4 +1,8 @@
-var db  = require('./Database');
+var db;
+
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
 
 /**
  * register new user if not exist

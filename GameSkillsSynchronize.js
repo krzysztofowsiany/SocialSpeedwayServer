@@ -1,9 +1,14 @@
-var db  = require('./Database');
+var db;
+
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
 
 
 function updateSyncData(playerid, data) {
-	try {
-		db.queryNoResults('UPDATE synchronize SET skills=$2 WHERE playerid=$1;', [playerid, data]);
+	try {		
+		db.queryNoResults('UPDATE synchronize SET skills=$2 WHERE playerid=$1;', 
+				[playerid, new Date(data - (new Date().getTimezoneOffset() * 60*1000)).toUTCString()]);
 	}
 	catch(e)
 	{
@@ -29,7 +34,7 @@ exports.setData = function (data, gameSocket) {
 			  	data.skills.endurance
 			],
 			function (results)	{
-				updateSyncData(data.playerID, data.date)
+				updateSyncData(data.playerID, data.date);
 				gameSocket.emit('saveSkillsResult', {result:1});				
 			}
 		);
@@ -50,11 +55,11 @@ exports.setData = function (data, gameSocket) {
 exports.getData = function (data, gameSocket) {	
 	try {
 		db.queryResults(				 
-				'SELECT p.strength, p.agility, p.speed, p.endurance, s.skillse FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
-				,[data['playerID']],
-				function (results)	{				
-					gameSocket.emit('syncSkillsResultData', results[0]);					
-				}
+			'SELECT p.strength, p.agility, p.speed, p.endurance, s.skills FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
+			,[data.playerID],
+			function (results)	{				
+				gameSocket.emit('syncSkillsResultData', results[0]);					
+			}
 		);
 	}
 	catch(e)	

@@ -1,9 +1,23 @@
-var db  = require('./Database');
+var db;
 
+exports.setDB = function(databaseHandler) {
+	db = databaseHandler;
+};
+
+function convertTimestampToUTC(date){
+	try {
+		return new Date(date - (new Date().getTimezoneOffset() * 60*1000)).toUTCString();		
+	}
+	catch(e)
+	{
+		console.error(e);
+	}
+}
 
 function updateSyncData(playerid, data) {
 	try {
-		db.queryNoResults('UPDATE synchronize SET training=$2 WHERE playerid=$1;', [playerid, data]);
+		db.queryNoResults('UPDATE synchronize SET training=$2 WHERE playerid=$1;', 
+				[playerid, convertTimestampToUTC(data)]);
 	}
 	catch(e)
 	{
@@ -20,16 +34,16 @@ function updateSyncData(playerid, data) {
 exports.setData = function (data, gameSocket) {	
 	try {		
 		db.queryResults(
-			'UPDATE playertraining SET type=$2, level=$3, endtime=$4, costend=$5 WHERE playerid=$1;'
+			'UPDATE playertraining SET type=$2, level=$3, endtime=$4, cost=$5 WHERE playerid=$1;'
 			,[
 			  	data.playerID,
-				data.training.type,
-				data.training.value,
-			  	data.training.end,
+				data.training.trainingType,
+				data.training.trainingLevel,
+				convertTimestampToUTC(data.training.endTime),
 			  	data.training.cost
 			],
 			function (results)	{
-				updateSyncData(data.playerID, data.date)
+				updateSyncData(data.playerID, data.date);
 				gameSocket.emit('saveTrainingResult', {result:1});				
 			}
 		);
@@ -50,11 +64,12 @@ exports.setData = function (data, gameSocket) {
 exports.getData = function (data, gameSocket) {	
 	try {
 		db.queryResults(				 
-				'SELECT p.strength, p.agility, p.speed, p.endurance, s.training FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
-				,[data['playerID']],
-				function (results)	{				
-					gameSocket.emit('syncTrainingResultData', results[0]);					
-				}
+			'SELECT t.type, t.level, t.endtime, t.cost, s.training FROM playertraining t JOIN synchronize s ON t.playerid=s.playerid WHERE t.playerid=$1;'
+			,[data.playerID],
+			function (results)	{			
+				console.log(results);
+				gameSocket.emit('syncTrainingResultData', results[0]);					
+			}
 		);
 	}
 	catch(e)	
