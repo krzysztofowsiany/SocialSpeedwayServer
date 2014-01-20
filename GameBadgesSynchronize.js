@@ -167,3 +167,37 @@ exports.getData = function (data, gameSocket) {
 		console.error(e);
 	}
 };
+
+
+
+/**
+ * getBadgesList
+ * @param data
+ * @param gameSocket
+ */
+exports.getBadgesList = function (data, gameSocket) {	
+	try {
+		console.log("GameBadgesSynchronization:getBadgesList");
+		db.queryResults(
+			'SELECT ba.badgeid AS ba_id, ba.name AS ba_name, ba.description AS ba_description, ba.file AS ba_file,'
+				+'bag.name AS bag_name, '
+				+'b.name AS b_name, b.value AS b_value,'
+				+'bt.name AS bt_name' 
+				+' FROM badges ba'
+				+' LEFT JOIN badgegroups bag ON ba.badgegroupid=bag.badgegroupid'
+				+' LEFT JOIN bonus b ON ba.bonusid=b.bonusid'
+				+' LEFT JOIN bonustype bt ON b.bonustypeid = bt.bonustypeid;', [],
+			function (results)	{
+				//result data
+				console.log(results);
+				//get sync data
+				gameSocket.emit('badgesList', results);						
+			}
+		);
+		
+	}
+	catch(e)		
+	{
+		console.error(e);
+	}
+};

@@ -66,10 +66,13 @@ exports.initializeGame = function (sio, socket) {
 	//Badges
 	gameSocket.on('badgesSetData', badgesSetData);	
 	gameSocket.on('badgesGetData', badgesGetData);
+	gameSocket.on('getBadgesList', getBadgesList);
+	
 	
 	//Achievements
 	gameSocket.on('achievementsSetData', achievementsSetData);	
 	gameSocket.on('achievementsGetData', achievementsGetData);
+	gameSocket.on('getAchievementsList', getAchievementsList);
 };
 
 
@@ -200,6 +203,17 @@ function badgesGetData(data) {
 	syncBadges.getData(data, gameSocket);	
 }
 
+
+/**
+ * Get badgess list
+ * getBadgesList
+ * @param data 
+ */
+function getBadgesList(data) {
+	syncBadges.getBadgesList(data, gameSocket);
+}
+
+
 /*************************************
  *    ACHIEVEMENTS syncRONIZATION   *
  ************************************/
@@ -222,3 +236,13 @@ function achievementsGetData(data) {
 	console.log(data);
 	syncAchievements.getData(data, gameSocket);	
 }
+
+/**
+ * Get achievements list
+ * getAchievementsList
+ * @param data 
+ */
+function getAchievementsList(data) {
+	syncAchievements.getAchievementsList(data, gameSocket);
+}
+

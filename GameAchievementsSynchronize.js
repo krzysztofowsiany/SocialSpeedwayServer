@@ -168,4 +168,40 @@ exports.getData = function (data, gameSocket) {
 	{
 		console.error(e);
 	}
+	
+};	
+	
+	
+
+/**
+ * getAchievementsList
+ * @param data
+ * @param gameSocket
+ */
+exports.getAchievementsList = function (data, gameSocket) {	
+	try {
+		console.log("GameAchievementsSynchronization:getAchievementsList");
+		db.queryResults(
+			'SELECT a.achievementid AS a_id, a.name AS a_name, a.description AS a_description, a.file AS a_file,'
+				+'ag.name AS ag_name, '
+				+'b.name AS b_name, b.value AS b_value,'
+				+'bt.name AS bt_name' 
+				+' FROM achievements a'
+				+' LEFT JOIN achievementgroups ag ON a.achievementgroupid=ag.achievementgroupid'
+				+' LEFT JOIN bonus b ON a.bonusid=b.bonusid'
+				+' LEFT JOIN bonustype bt ON b.bonustypeid = bt.bonustypeid;', [],
+			function (results)	{
+				//result data
+				console.log(results);
+				//get sync data
+				gameSocket.emit('achievementsList', results);						
+			}
+		);
+		
+	}
+	catch(e)		
+	{
+		console.error(e);
+	}
+	
 };
