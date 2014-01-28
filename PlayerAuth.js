@@ -11,7 +11,7 @@ exports.setDB = function(databaseHandler) {
  */
 exports.register = function (data, gameSocket) {
 	try {		
-		console.log(data);
+		var playerID;
 		db.queryResults('SELECT * FROM players WHERE email=$1 LIMIT 1;', [data.email],
 			function (results)	{				
 				if (results.length>0){
@@ -19,9 +19,10 @@ exports.register = function (data, gameSocket) {
 				}
 				else {
 					db.queryResults("INSERT INTO players(email, password) VALUES($1,$2) RETURNING playerid;", [data.email, data.password],							
-						function (results)	{		
-						console.log(results);
+						function (results)	{
 							if (results.length>0){
+								playerID = results[0].playerid;
+							
 								db.queryNoResults("INSERT INTO playerprofiles(playerid, sex, avatar, name, surname, age, mobile) VALUES($1,$2,$3,$4,$5,$6,$7);",[
 							         results[0].playerid,
 							         parseInt(data.profile.sex,10), 
@@ -30,65 +31,62 @@ exports.register = function (data, gameSocket) {
 									 data.profile.surname,
 									 parseInt(data.profile.age, 10),
 									 data.profile.mobile
-								]);
-								
-								
-								/*
-								 * add playerdatalogs
-								 */
-								db.queryNoResults("INSERT INTO playerdatalogs(playerid, registered," +
-										"accepted, modified, logged) VALUES($1," +
-										"now()," +
-										"'01-01-0001 00:00:00'," +
-										"'01-01-0001 00:00:00'," +
-										"'01-01-0001 00:00:00');",
-									[results[0].playerid]
-								);
-								
-
-								/*
-								 * add playerskills
-								 */
-								db.queryNoResults("INSERT INTO playerskills(playerid, " +
-										"strength," +
-										"agility, " +
-										"speed, " +
-										"endurance) VALUES($1," +
-										"0,0,0,0);",
-										[results[0].playerid]
-								);	
-								
-
-								/*
-								 * add synchronization 
-								 * timestamp to synchronize parts of data
-								 */
-								db.queryNoResults("INSERT INTO synchronize(playerid, profile," +
-										"skills, training, badges, achievements) VALUES($1," +
-										"'01-01-0001 00:00:00'," +
-										"'01-01-0001 00:00:00'," +
-										"'01-01-0001 00:00:00'," +
-										"'01-01-0001 00:00:00'," +
-										"'01-01-0001 00:00:00');",
-									[results[0].playerid]
-								);
-								
-								
-								/*
-								 * add training
-								 * training type, level, endtime and cost
-								 */
-								db.queryNoResults("INSERT INTO playertraining(playerid, type," +
-										"level, endtime, cost) VALUES($1," +
-										"0," +
-										"0," +
-										"null," +										
-										"0);",
-									[results[0].playerid]
-								);
-														 
-								               
-								gameSocket.emit('register_result', {register_result:results[0].playerid});
+								],
+								function (){
+									/*
+									 * add playerdatalogs
+									 */
+									db.queryNoResults("INSERT INTO playerdatalogs(playerid, registered," +
+											"accepted, modified, logged) VALUES($1," +
+											"now()," +
+											"'01-01-0001 00:00:00'," +
+											"'01-01-0001 00:00:00'," +
+											"'01-01-0001 00:00:00');",
+										[playerID],
+										function () {	
+											/*
+											 * add playerskills
+											 */
+											db.queryNoResults("INSERT INTO playerskills(playerid, " +
+													"strength," +
+													"agility, " +
+													"speed, " +
+													"endurance) VALUES($1," +
+													"0,0,0,0);",
+												[playerID],
+												function () {	
+												/*
+												 * add synchronization 
+												 * timestamp to synchronize parts of data
+												 */
+												db.queryNoResults("INSERT INTO synchronize(playerid, profile," +
+														"skills, training, badges, achievements) VALUES($1," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00');",
+													[playerID],
+													function () {													
+													
+													/*
+													 * add training
+													 * training type, level, endtime and cost
+													 */
+													db.queryNoResults("INSERT INTO playertraining(playerid, type," +
+															"level, endtime, cost) VALUES($1," +
+															"0," +
+															"0," +
+															"null," +										
+															"0);",
+														[playerID],
+														function () {								               
+															gameSocket.emit('register_result', {register_result:playerID});
+													});
+												});
+											});
+									});									
+								});
 							}
 						}
 					);
