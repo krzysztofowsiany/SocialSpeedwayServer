@@ -25,13 +25,14 @@ function updateSyncData(playerid, data) {
 exports.setData = function (data, gameSocket) {	
 	try {		
 		db.queryResults(
-			'UPDATE playerskills SET strength=$2, agility=$3, speed=$4, endurance=$5 WHERE playerid=$1;'
+			'UPDATE playerskills SET strength=$2, agility=$3, speed=$4, endurance=$5, rest=$6 WHERE playerid=$1;'
 			,[
 			  	data.playerID,
 				data.skills.strength,
 				data.skills.agility,
 			  	data.skills.speed,
-			  	data.skills.endurance
+			  	data.skills.endurance,
+			  	data.skills.rest
 			],
 			function (results)	{
 				updateSyncData(data.playerID, data.date);
@@ -55,7 +56,7 @@ exports.setData = function (data, gameSocket) {
 exports.getData = function (data, gameSocket) {	
 	try {
 		db.queryResults(				 
-			'SELECT p.strength, p.agility, p.speed, p.endurance, s.skills FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
+			'SELECT p.strength, p.agility, p.speed, p.endurance, p.rest, s.skills FROM playerskills p JOIN synchronize s ON s.playerid=p.playerid WHERE p.playerid=$1;'
 			,[data.playerID],
 			function (results)	{				
 				gameSocket.emit('syncSkillsResultData', results[0]);					

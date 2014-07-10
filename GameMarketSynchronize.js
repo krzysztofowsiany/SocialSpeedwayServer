@@ -78,3 +78,15 @@ exports.getData = function (data, gameSocket) {
 		console.error(e);
 	}
 };
+
+
+export.setEvent(gameSocket){
+	// Auth events
+	gameSocket.on('register', register);
+	gameSocket.on('login', login);
+};
+
+
+function register(data) {
+	playerAuth.register(data, gameSocket);
+}

@@ -51,8 +51,9 @@ exports.register = function (data, gameSocket) {
 													"strength," +
 													"agility, " +
 													"speed, " +
-													"endurance) VALUES($1," +
-													"0,0,0,0);",
+													"endurance, " +
+													"rest) VALUES($1," +
+													"0,0,0,0,0);",
 												[playerID],
 												function () {	
 												/*
@@ -60,7 +61,12 @@ exports.register = function (data, gameSocket) {
 												 * timestamp to synchronize parts of data
 												 */
 												db.queryNoResults("INSERT INTO synchronize(playerid, profile," +
-														"skills, training, badges, achievements) VALUES($1," +
+														"skills, training, badges, achievements, "+
+														"market, rank, machine_park, schedule) VALUES($1," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00'," +
+														"'01-01-0001 00:00:00'," +
 														"'01-01-0001 00:00:00'," +
 														"'01-01-0001 00:00:00'," +
 														"'01-01-0001 00:00:00'," +
