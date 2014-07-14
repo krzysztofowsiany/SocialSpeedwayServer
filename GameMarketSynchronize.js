@@ -16,7 +16,7 @@ function convertTimestampToUTC(date){
 
 function updateSyncData(playerid, data) {
 	try {
-		db.queryNoResults('UPDATE synchronize SET training=$2 WHERE playerid=$1;', 
+		db.queryNoResults('UPDATE synchronize SET market=$2 WHERE playerid=$1;', 
 				[playerid, convertTimestampToUTC(data)]);
 	}
 	catch(e)
@@ -57,18 +57,42 @@ exports.setData = function (data, gameSocket) {
 
 
 /**
- * getData
+ * getMarketToBuy
  * @param data
  * @param gameSocket
  */
-exports.getData = function (data, gameSocket) {	
+exports.getMarketToBuyList = function (data, gameSocket) {	
 	try {
 		db.queryResults(				 
-			'SELECT t.type, t.level, t.endtime, t.cost, s.training FROM playertraining t JOIN synchronize s ON t.playerid=s.playerid WHERE t.playerid=$1;'
+			'SELECT p.name, p.wear, p.price, g.name FROM parts p LEFT JOIN partgroups g ON g.partGroupID = p.partGroupID WHERE p.status = 0;'
+			,[data.playerID],
+			function (results)	{			
+				//console.log(results);
+				gameSocket.emit('syncMarketToBuyList', results[0]);					
+			}
+		);
+	}
+	catch(e)	
+	
+	{
+		console.error(e);
+	}
+};
+
+
+/**
+ * getMarketToSell
+ * @param data
+ * @param gameSocket
+ */
+exports.getMarketToSellList = function (data, gameSocket) {	
+	try {
+		db.queryResults(				 
+			'SELECT p.name, p.wear, p.price, g.name FROM parts p LEFT JOIN partgroups g ON g.partGroupID = p.partGroupID WHERE p.status = 0;'
 			,[data.playerID],
 			function (results)	{			
 				console.log(results);
-				gameSocket.emit('syncTrainingResultData', results[0]);					
+				gameSocket.emit('syncMarketToSellList', results[0]);					
 			}
 		);
 	}
